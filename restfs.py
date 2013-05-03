@@ -4,7 +4,7 @@ import json
 import logging
 import xml.etree.ElementTree as ET
 
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.WARN,
                     format='%(asctime)s - %(levelname)s -  %(message)s')
 
 DEFAULT_HEADER = {
@@ -108,11 +108,32 @@ class RestFs(object):
             conn.close()
             return json.loads(raw_payload)
     
-    def create(self):
-        raise RestFsNotImplementedError
+    def create(self, thePath, theAttributes={}):
+        logging.info("RestFs.create with path: '{path}' and attributes '{attributes}'".format(path=thePath, attributes=repr(theAttributes)))
+        conn = http.client.HTTPConnection(self.gom_root.netloc)
+        conn.request("POST",
+                     thePath,
+                     attributes_to_xml(theAttributes),
+                     headers = {
+                          "Content-Type": "application/xml"
+                     })
+        response = conn.getresponse()
+        if (response.status == 500):
+            raise RestFsResponseError(response)
+        return response.getheader('Location')
     
-    def delete(self):
-        raise RestFsNotImplementedError
+    def delete(self, thePath):
+        # TODO Safeguard the Path a little?
+        conn = http.client.HTTPConnection(self.gom_root.netloc)
+        conn.request("DELETE",
+                     thePath)
+        response = conn.getresponse()
+        
+        if (response.status == 500):
+            raise RestFsResponseError(response)
+        elif (response.status == 404):
+            return None
+        return True
         
     def register_observer(self):
         raise RestFsNotImplementedError

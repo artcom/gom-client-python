@@ -109,9 +109,58 @@ Assuming gom is at `"http://192.168.56.101:3080"`
     ```
 
 * DELETE/delete
-  Tbd
+
+  * Delete existing node
+  
+    ```python
+    >>> import restfs
+    >>> REST_FS = restfs.RestFs("http://192.168.56.101:3080")
+    >>> REST_FS.delete("/test/c18bf546-e577-414a-92d2-2ebdfb69b4f6")
+    True
+    ```
+
+  * Delete non-existing node
+  
+    ```python
+    >>> import restfs
+    >>> REST_FS = restfs.RestFs("http://192.168.56.101:3080")
+    >>> print(REST_FS.delete("/test/does-not-exist"))
+    None
+    ```
+  
+Attributes are deleted accordingly
+
 * CREATE/create
-  Tbd
+  
+  ```python
+  >>> import restfs
+  >>> REST_FS = restfs.RestFs("http://192.168.56.101:3080")
+  >>> REST_FS.create("/test")
+  '/test/c18bf546-e577-414a-92d2-2ebdfb69b4f6'
+  ```
+  
+  ```
+  >>> import restfs
+  >>> from pprint import pprint
+  >>> REST_FS = restfs.RestFs("http://192.168.56.101:3080")
+  >>> REST_FS.create("/test", {"name":"Hans", "profession": "Lumberjack"})
+  '/test/419e9db0-2800-43ed-9053-edaafd4f60b3'
+  >>> pprint(REST_FS.retrieve("/test/419e9db0-2800-43ed-9053-edaafd4f60b3"))
+  {'node': {'ctime': '2012-10-12T10:43:25+02:00',
+            'entries': [{'attribute': {'ctime': '2012-10-12T10:43:25+02:00',
+                                       'mtime': '2012-10-12T10:43:25+02:00',
+                                       'name': 'name',
+                                       'node': '/test/419e9db0-2800-43ed-9053-edaafd4f60b3',
+                                       'type': 'string',
+                                       'value': 'Hans'}},
+                        {'attribute': {'ctime': '2012-10-12T10:43:25+02:00',
+                                       'mtime': '2012-10-12T10:43:25+02:00',
+                                       'name': 'profession',
+                                       'node': '/test/419e9db0-2800-43ed-9053-edaafd4f60b3',
+                                       'type': 'string',
+                                       'value': 'Lumberjack'}}],
+            'mtime': '2012-10-12T10:43:25+02:00',
+            'uri': '/test/419e9db0-2800-43ed-9053-edaafd4f60b3'}}
 
 TODO
 ---
