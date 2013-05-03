@@ -89,6 +89,26 @@ Assuming gom is at `"http://192.168.56.101:3080"`
     ```
 
 * PUT/update
+
+  * Attribute update
+
+    ```python
+    >>> import restfs
+    >>> REST_FS = restfs.RestFs("http://192.168.56.101:3080")
+    >>> REST_FS.update("/test:temperature", "50 °C")
+    '50 °C'
+    ```
+   
+  * Node update
+
+    ```python
+    >>> import restfs
+    >>> REST_FS = restfs.RestFs("http://192.168.56.101:3080")
+    >>> REST_FS.update("/test/weather", {"temperature": "50 °C", "wind_velocity": "3 km/h", "wind_direction": "NNW"})
+    2013-05-03 17:06:58,000 - INFO -  RestFs.update with path: '/test/weather' and value '{'wind_velocity': '3 km/h', 'wind_direction': 'NNW', 'temperature': '50 °C'}'
+    {'status': 201}
+    ```
+
 * DELETE/delete
   Tbd
 * CREATE/create
