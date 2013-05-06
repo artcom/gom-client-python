@@ -140,7 +140,7 @@ Attributes are deleted accordingly
   
   * Create node with attributes
   
-    ```
+    ```python
     >>> import restfs
     >>> from pprint import pprint
     >>> REST_FS = restfs.RestFs("http://192.168.56.101:3080")
