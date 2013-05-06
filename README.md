@@ -176,8 +176,19 @@ Attributes are deleted accordingly
               'uri': '/test/419e9db0-2800-43ed-9053-edaafd4f60b3'}}
     ```
 
-TODO
----
+##Packaging
+
+The module gom_client can be moved around freely in your project and has no further dependencies.
+
+If required though a package can be built and installed system wide by executing
+
+```bash
+easy_install-3.2 .
+```
+
+in the checkout directory. `easy_install-3.2`'s specific name can vary depending your system setup.
+
+##TODO
 
 * Support script runner (maybe)
 * Support gom observer creation (probably)

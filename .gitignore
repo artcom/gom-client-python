@@ -1,1 +1,4 @@
 *.pyc
+/gom_client.egg-info/
+/dist/
+/build/
