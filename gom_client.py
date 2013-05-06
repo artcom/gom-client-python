@@ -7,11 +7,6 @@ import xml.etree.ElementTree as ET
 logging.basicConfig(level=logging.WARN,
                     format='%(asctime)s - %(levelname)s -  %(message)s')
 
-DEFAULT_HEADER = {
-    "Accept": "application/json",
-    "Content-Type": "application/json"
-}
-
 def addDefaultHeaders(theRequest):
     for key,value in DEFAULT_HEADER.items():
         theRequest.add_header(key, value)
@@ -49,14 +44,21 @@ class GomClient(object):
         logging.info("RestFs.__init__ with gom_root: '{gom_root}'".format(gom_root=theGomRoot))
         self.gom_root = urllib.parse.urlparse(theGomRoot)
     
-    # TODO add redirection support (with limit of course)
-    def retrieve(self, thePath):
-        logging.info("RestFs.retrieve with path: '{path}'".format(path=thePath))
+    def _perform_request(self, thePath, theMethod, theHeaders, thePayload= None):
         conn = http.client.HTTPConnection(self.gom_root.netloc)
-        conn.request("GET", thePath, headers=DEFAULT_HEADER)
+        conn.request(theMethod, thePath, thePayload, theHeaders)
         response = conn.getresponse()
         raw_payload = response.read().decode('utf-8')
         conn.close()
+        return (response, raw_payload)
+    
+    # TODO add redirection support (with limit of course)
+    def retrieve(self, thePath):
+        logging.info("RestFs.retrieve with path: '{path}'".format(path=thePath))
+        response, raw_payload = self._perform_request(thePath, "GET", {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        })
         if (response.status == 500):
             raise RestFsResponseError(response)
         elif (response.status == 200):
@@ -75,48 +77,35 @@ class GomClient(object):
                 raise RestFsBaseError("update attribute call must include value")
             if (type(theValue) != str):
                 raise RestFsBaseError("update attribute value must be a string")
-            conn = http.client.HTTPConnection(self.gom_root.netloc)
-            conn.request("PUT",
-                         thePath,
-                         urllib.parse.urlencode({'attribute': theValue,
-                                                 "type": "string"}),
-                         headers = {
-                             "Accept": "text/plain",
-                             "Content-Type": "application/x-www-form-urlencoded"
-                         })
-            response = conn.getresponse()
-            payload = response.read().decode('utf-8')
-            conn.close()
-            return payload
+            response, raw_payload = self._perform_request(thePath, "PUT", {
+                    "Accept": "text/plain",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                 },
+                 urllib.parse.urlencode({'attribute': theValue,
+                                         "type": "string"}))
+            if (response.status == 500):
+                raise RestFsResponseError(response)
+            return raw_payload
         else:
             logging.info("    * node")
             if (type(theValue) != dict):
                 raise RestFsBaseError("update attribute value must be a dict")
-            conn = http.client.HTTPConnection(self.gom_root.netloc)
-            conn.request("PUT",
-                         thePath,
-                         attributes_to_xml(theValue),
-                         headers = {
-                             "Accept": "application/json",
-                             "Content-Type": "application/xml"
-                         })
-            response = conn.getresponse()
+            response, raw_payload = self._perform_request(thePath, "PUT", {
+                    "Accept": "application/json",
+                    "Content-Type": "application/"
+                },
+                 attributes_to_xml(theValue))
             if (response.status == 500):
                 raise RestFsResponseError(response)
-            raw_payload = response.read().decode('utf-8')
-            conn.close()
             return json.loads(raw_payload)
     
     def create(self, thePath, theAttributes={}):
         logging.info("RestFs.create with path: '{path}' and attributes '{attributes}'".format(path=thePath, attributes=repr(theAttributes)))
-        conn = http.client.HTTPConnection(self.gom_root.netloc)
-        conn.request("POST",
-                     thePath,
-                     attributes_to_xml(theAttributes),
-                     headers = {
-                          "Content-Type": "application/xml"
-                     })
-        response = conn.getresponse()
+        
+        response, raw_payload = self._perform_request(thePath, "POST", {
+                "Content-Type": "application/xml"
+            },
+            attributes_to_xml(theAttributes))
         if (response.status == 500):
             raise RestFsResponseError(response)
         return response.getheader('Location')
@@ -127,6 +116,7 @@ class GomClient(object):
         conn.request("DELETE",
                      thePath)
         response = conn.getresponse()
+        conn.close()
         
         if (response.status == 500):
             raise RestFsResponseError(response)
