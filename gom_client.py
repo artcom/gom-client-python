@@ -43,8 +43,7 @@ class RestFsResponseError(RestFsBaseError):
     def __str__(self):
         return str(self.response.status) + "-" + self.response.reason# + "(" + repr(response) + ")"
 
-# Actual RestFsClass
-class RestFs(object):
+class GomClient(object):
     
     def __init__(self, theGomRoot):
         logging.info("RestFs.__init__ with gom_root: '{gom_root}'".format(gom_root=theGomRoot))
@@ -140,5 +139,4 @@ class RestFs(object):
         
     def run_script(self):
         raise RestFsNotImplementedError
-
-        
+       

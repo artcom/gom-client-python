@@ -1,4 +1,4 @@
-#Python Gom RestFs Client
+#Python Gom Client
 
 ##Requirements
 
@@ -9,13 +9,13 @@
 ### Setup and initialization
 
 ```python
-import restfs
-REST_FS = restfs.RestFs(<Gom-URI>)
+import gom_client
+GOM = gom_client.GomClient(<Gom-URI>)
 ```
 
 Where the gom-uri is of format `"http://<ip/name>:<port>"`.
 
-All further operations are then performed via the initialized object (in this example `REST_FS`)
+All further operations are then performed via the initialized object (in this example `GOM`)
 
 ###RESTful operations
 
@@ -26,10 +26,10 @@ Assuming gom is at `"http://192.168.56.101:3080"`
   * Attribute retrieval:
 
     ```python
-    >>> import restfs
+    >>> import gom_client
     >>> from pprint import pprint
-    >>> REST_FS = restfs.RestFs("http://192.168.56.101:3080")
-    >>> myAttribute = REST_FS.retrieve("/test:myAttr")
+    >>> GOM = gom_client.GomClient("http://192.168.56.101:3080")
+    >>> myAttribute = GOM.retrieve("/test:myAttr")
     >>> pprint(myAttribute)
     {'attribute': {'ctime': '2012-10-12T08:46:48+02:00',
                'mtime': '2012-10-12T08:46:48+02:00',
@@ -44,10 +44,10 @@ Assuming gom is at `"http://192.168.56.101:3080"`
   * Node retrieval:
 
     ```python
-    >>> import restfs
+    >>> import gom_client
     >>> from pprint import pprint
-    >>> REST_FS = restfs.RestFs("http://192.168.56.101:3080")
-    >>> myNode = REST_FS.retrieve("/areas")
+    >>> GOM = gom_client.GomClient("http://192.168.56.101:3080")
+    >>> myNode = GOM.retrieve("/areas")
     >>> pprint(myNode)
     {'node': {'ctime': '2012-09-20T04:51:56+02:00',
           'entries': [{'ctime': '2012-07-30T16:13:02+02:00',
@@ -90,18 +90,18 @@ Assuming gom is at `"http://192.168.56.101:3080"`
   * Attribute update
 
     ```python
-    >>> import restfs
-    >>> REST_FS = restfs.RestFs("http://192.168.56.101:3080")
-    >>> REST_FS.update("/test:temperature", "50 °C")
+    >>> import gom_client
+    >>> GOM = gom_client.GomClient("http://192.168.56.101:3080")
+    >>> GOM.update("/test:temperature", "50 °C")
     '50 °C'
     ```
    
   * Node update
 
     ```python
-    >>> import restfs
-    >>> REST_FS = restfs.RestFs("http://192.168.56.101:3080")
-    >>> REST_FS.update("/test/weather", {"temperature": "50 °C", "wind_velocity": "3 km/h", "wind_direction": "NNW"})
+    >>> import gom_client
+    >>> GOM = gom_client.GomClient("http://192.168.56.101:3080")
+    >>> GOM.update("/test/weather", {"temperature": "50 °C", "wind_velocity": "3 km/h", "wind_direction": "NNW"})
     {'status': 201}
     ```
 
@@ -110,18 +110,18 @@ Assuming gom is at `"http://192.168.56.101:3080"`
   * Delete existing node
   
     ```python
-    >>> import restfs
-    >>> REST_FS = restfs.RestFs("http://192.168.56.101:3080")
-    >>> REST_FS.delete("/test/c18bf546-e577-414a-92d2-2ebdfb69b4f6")
+    >>> import gom_client
+    >>> GOM = gom_client.GomClient("http://192.168.56.101:3080")
+    >>> GOM.delete("/test/c18bf546-e577-414a-92d2-2ebdfb69b4f6")
     True
     ```
 
   * Delete non-existing node
   
     ```python
-    >>> import restfs
-    >>> REST_FS = restfs.RestFs("http://192.168.56.101:3080")
-    >>> print(REST_FS.delete("/test/does-not-exist"))
+    >>> import gom_client
+    >>> GOM = gom_client.GomClient("http://192.168.56.101:3080")
+    >>> print(GOM.delete("/test/does-not-exist"))
     None
     ```
   
@@ -132,21 +132,21 @@ Attributes are deleted accordingly
   * Create empty node
   
    ```python
-   >>> import restfs
-   >>> REST_FS = restfs.RestFs("http://192.168.56.101:3080")
-   >>> REST_FS.create("/test")
+   >>> import gom_client
+   >>> GOM = gom_client.GomClient("http://192.168.56.101:3080")
+   >>> GOM.create("/test")
    '/test/c18bf546-e577-414a-92d2-2ebdfb69b4f6'
    ```
   
   * Create node with attributes
   
     ```python
-    >>> import restfs
+    >>> import gom_client
     >>> from pprint import pprint
-    >>> REST_FS = restfs.RestFs("http://192.168.56.101:3080")
-    >>> REST_FS.create("/test", {"name":"Hans", "profession": "Lumberjack"})
+    >>> GOM = gom_client.GomClient("http://192.168.56.101:3080")
+    >>> GOM.create("/test", {"name":"Hans", "profession": "Lumberjack"})
     '/test/419e9db0-2800-43ed-9053-edaafd4f60b3'
-    >>> pprint(REST_FS.retrieve("/test/419e9db0-2800-43ed-9053-edaafd4f60b3"))
+    >>> pprint(GOM.retrieve("/test/419e9db0-2800-43ed-9053-edaafd4f60b3"))
     {'node': {'ctime': '2012-10-12T10:43:25+02:00',
               'entries': [{'attribute': {'ctime': '2012-10-12T10:43:25+02:00',
                                          'mtime': '2012-10-12T10:43:25+02:00',
