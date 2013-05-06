@@ -85,6 +85,18 @@ Assuming gom is at `"http://192.168.56.101:3080"`
      '/areas/welcome']
     ```
 
+  * Retrieval of non-existent Node/Attribute:
+
+    ```python
+    >>> import gom_client
+    >>> from pprint import pprint
+    >>> GOM = gom_client.GomClient("http://192.168.56.101:3080")
+    >>> pprint(GOM.retrieve("/test/does-not-exist"))
+    None
+    >>> pprint(GOM.retrieve("/test:does-not-exist"))
+    None
+    ```
+
 * PUT/update
 
   * Attribute update
