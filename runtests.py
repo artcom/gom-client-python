@@ -1,0 +1,1 @@
+python3.2 -m unittest discover -p "*_test.py"
