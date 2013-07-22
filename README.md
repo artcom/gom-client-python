@@ -37,7 +37,7 @@ Assuming gom is at `"http://192.168.56.101:3080"`
                'node': '/test',
                'type': 'string',
                'value': 'test'}}
-    >>> print(myAttribute['attribute']['value']
+    >>> print(myAttribute['attribute']['value'])
     test
     ```
 
